@@ -1,37 +1,22 @@
 # Start from a Debian image with the latest version of Go installed
 # and a workspace (GOPATH) configured at /go.
-FROM golang
+FROM golang:1.21
 
-# Contact maintainer with any issues you encounter
-MAINTAINER Richard Knop <risoknop@gmail.com>
 
-# Set environment variables
-ENV PATH /go/bin:$PATH
+RUN useradd -u 10001 gopher
 
-# Create a new unprivileged user
-RUN useradd --user-group --shell /bin/false app
+ENV NAME "go-oauth2-server"
 
-# Cd into the api code directory
-WORKDIR /go/src/github.com/RichardKnop/go-oauth2-server
+WORKDIR /opt/${NAME}
 
-# Copy the local package files to the container's workspace.
-ADD . /go/src/github.com/RichardKnop/go-oauth2-server
+COPY ../go.mod .
+COPY ../go.sum .
 
-# Set GO111MODULE=on variable to activate module support
-ENV GO111MODULE on
+RUN go mod download
 
-# Chown the application directory to app user
-RUN chown -R app:app /go/src/github.com/RichardKnop/go-oauth2-server/
+COPY . .
 
-# Create user's home directory
-RUN mkdir -p /home/app
-RUN chown app /home/app
-
-# Use the unprivileged user
-USER app
-
-# Install the api program
-RUN go install github.com/RichardKnop/go-oauth2-server
+RUN CGO_ENABLED=0 go build -o ${NAME} .
 
 # User docker-entrypoint.sh script as entrypoint
 ENTRYPOINT ["./docker-entrypoint.sh"]
