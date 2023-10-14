@@ -80,7 +80,7 @@ services:
       - postgres
     networks:
       - default
-    command: ["loaddata", "oauth/fixtures/test_clients.yml"]
+    command: ["client", "ghost_gate", "o2JPO2Jf5ZAOsEfziTvuBt" , "http://localhost:8080"]
 
 volumes:
   etcd-data:

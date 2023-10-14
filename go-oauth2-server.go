@@ -48,6 +48,13 @@ func main() {
 			},
 		},
 		{
+			Name:  "client",
+			Usage: "load client from fixture",
+			Action: func(c *cli.Context) error {
+				return cmd.NewClient(c.Args().Get(0), c.Args().Get(1), c.Args().Get(2), configBackend)
+			},
+		},
+		{
 			Name:  "runserver",
 			Usage: "run web server",
 			Action: func(c *cli.Context) error {
